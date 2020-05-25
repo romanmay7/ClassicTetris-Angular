@@ -19,9 +19,13 @@ export class GameScreenComponent implements OnInit {
 
       N:number;  //number of Cells in the Row
       M:number;  //number of Rows
+
       Scale:number;
       fieldWidth:number;
       fieldHeight:number;
+
+      initX=3
+      initY=0
 
 
   constructor() { }
@@ -29,10 +33,17 @@ export class GameScreenComponent implements OnInit {
   ngOnInit() {
 
     this.N=10;
-    this.M=30;
+    this.M=20;
+
     this.Scale=40;
     this.fieldWidth=this.Scale*this.N;
     this.fieldHeight=this.Scale*this.M;
+    
+    var tetramino_type1:number[][]=[ [0,1,0,0],[0,1,1,0],[0,0,1,0],[0,0,0,0]] 
+    var tetramino_type2:number[][]=[ [0,1,1,0],[0,1,1,0],[0,0,0,0],[0,0,0,0]]
+    var tetramino_type3:number[][]=[ [0,1,1,0],[0,1,0,0],[0,1,0,0],[0,0,0,0]]
+    var tetramino_type4:number[][]=[ [0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]]
+    var tetramino_type5:number[][]=[ [0,1,0,0],[1,1,1,0],[0,0,0,0],[0,0,0,0]]  
 
     //Once the component has initialized, we’ll have access to the Canvas DOM node, as well
     //as its drawing context:
@@ -42,6 +53,23 @@ export class GameScreenComponent implements OnInit {
     this.ctx.fillRect(0, 0, this.fieldWidth, this.fieldHeight);
 
     this.drawGameFieldLines();
+    
+    this.ctx.fillStyle = 'yellow';
+
+    for(var i=0;i<4;i++)
+    {
+      for(var j=0;j<4;j++)
+      {
+        if(tetramino_type3[j][i]==1)
+        {
+          this.ctx.fillRect((this.initX+i)*this.Scale, (this.initY+j)*this.Scale, 40, 40);
+          
+
+        }
+
+      }
+
+    }
 
   }
 
