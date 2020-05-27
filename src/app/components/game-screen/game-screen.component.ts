@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-game-screen',
@@ -29,6 +29,7 @@ export class GameScreenComponent implements OnInit {
 
       isRunning=true;
       framesPerSecond = 2;
+      direction=0;
 
       gameField: Cell[][]
 
@@ -74,6 +75,24 @@ export class GameScreenComponent implements OnInit {
     requestAnimationFrame(()=>this.animate(this.ctx));
     
   }
+  
+    //Listening to key events
+    @HostListener('window:keydown', ['$event'])
+    keyEvent(event: KeyboardEvent) {
+      console.log(event);
+    
+      var key = event.keyCode;
+      console.log(key);
+      
+      switch(key)
+       {
+        case 40: if(this.direction!=3) this.direction=0; break; //down
+        case 39: if(this.direction!=1)this.direction=1; break; //right
+        case 37: if(this.direction!=2)this.direction=2; break; //left
+        case 38: if(this.direction!=0)this.direction=3; break; //up
+       }
+    }
+
 
   initializeBrickWall()
   {
@@ -195,7 +214,7 @@ export class GameScreenComponent implements OnInit {
 
   }
 
-  moveTetramino(gcntxt:CanvasRenderingContext2D)
+  makeTetraminoFall(gcntxt:CanvasRenderingContext2D)
   {
     //moving Tetramino's initY Coordinate down,maiking it to fall down
     if(!this.checkColission())
@@ -207,7 +226,40 @@ export class GameScreenComponent implements OnInit {
       this.buildWallPiece()
    
     }
+    
+  }
 
+  moveTetramino()
+  {
+    //moving Tetramino
+    
+    if(this.direction==1)
+    {
+      if(this.initX+this.findTetraminoRightEdge()<=8)
+      {
+      this.initX=this.initX + 1
+      console.log("X:"+this.initX);
+      this.direction=0;
+      }
+    }
+    if(this.direction==2)
+    {
+       var leftEdge=this.findTetraminoLeftEdge();
+
+      if((leftEdge>0)&&(this.initX-leftEdge>=-1))
+      {
+        this.initX=this.initX - 1
+        console.log("X:"+this.initX);
+        this.direction=0;
+
+      }
+      else if((leftEdge==0)&&(this.initX-leftEdge>0))
+       {
+        this.initX=this.initX - 1
+        console.log("X:"+this.initX);
+        this.direction=0;
+       }
+    }
     
   }
 
@@ -254,6 +306,52 @@ this.currentTetramino=this.tetraminoTypes[this.randomTetraminoType()]
 
 }
 
+findTetraminoLeftEdge():number
+{
+  var leftEdgeCoordinate=1
+  for(var i=0;i<4;i++)
+  {
+    for(var j=0;j<4;j++)
+    {
+      if((this.currentTetramino[i][j]==1)&&(j==0))
+      {
+        console.log("Left:"+0);
+        return 0;
+
+      }
+      else if((this.currentTetramino[i][j]==1)&&(j<leftEdgeCoordinate)) 
+      {
+        leftEdgeCoordinate=j;
+      }
+    }  
+}
+console.log("Left:"+leftEdgeCoordinate);
+return leftEdgeCoordinate;
+}
+
+findTetraminoRightEdge():number
+{
+  var rightEdgeCoordinate=0
+  for(var i=0;i<4;i++)
+  {
+    for(var j=3;j>0;j--)
+    {
+      if((this.currentTetramino[i][j]==1)&&(j==3))
+      {
+        return 3;
+
+      }
+      else if((this.currentTetramino[i][j]==1)&&(j>rightEdgeCoordinate)) 
+      {
+        rightEdgeCoordinate=j;
+      }
+    }
+}
+console.log("Right:"+rightEdgeCoordinate);
+return rightEdgeCoordinate;
+}
+
+
 ifGameOver():boolean
 {
   for(var n=0;n<this.N;n++)
@@ -274,9 +372,10 @@ ifGameOver():boolean
             this.drawBrickWall()  
             this.drawTetramino();
             this.eraseTetramino()
-            this.moveTetramino(graphicsContext);
+            this.makeTetraminoFall(graphicsContext);
+            this.moveTetramino();
             this.drawTetramino();
-
+            
             if(this.ifGameOver()){
               clearInterval(timeout);
               alert("GameOver!");
