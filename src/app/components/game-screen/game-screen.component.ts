@@ -28,7 +28,7 @@ export class GameScreenComponent implements OnInit {
       initY=0
 
       isRunning=true;
-      framesPerSecond = 2;
+      framesPerSecond = 4;
       direction=0;
 
       gameField: Cell[][]
@@ -89,7 +89,7 @@ export class GameScreenComponent implements OnInit {
         case 40: if(this.direction!=3) this.direction=0; break; //down
         case 39: if(this.direction!=1)this.direction=1; break; //right
         case 37: if(this.direction!=2)this.direction=2; break; //left
-        case 38: if(this.direction!=0)this.direction=3; break; //up
+        case 38: if(this.allowRotation())this.rotateTetramino90Clockwise(); break; //up
        }
     }
 
@@ -211,7 +211,7 @@ export class GameScreenComponent implements OnInit {
       }
 
     }
-
+  
   }
 
   makeTetraminoFall(gcntxt:CanvasRenderingContext2D)
@@ -279,6 +279,37 @@ export class GameScreenComponent implements OnInit {
 
     }
 
+  }
+}
+
+allowRotation():boolean
+{
+  if(this.direction==0)
+  {
+    return true
+  }
+  if(this.direction==1)
+  {
+    if(this.initX+this.findTetraminoRightEdge()<=8)
+    {
+        return true
+    }
+    else return false;
+  }
+  else if(this.direction==2)
+  {
+     var leftEdge=this.findTetraminoLeftEdge();
+
+    if((leftEdge>0)&&(this.initX-leftEdge>=-1))
+    {
+      return true
+
+    }
+    else if((leftEdge==0)&&(this.initX-leftEdge>0))
+     {
+      return true
+     }
+     else return false;
   }
 }
 
@@ -351,6 +382,45 @@ console.log("Right:"+rightEdgeCoordinate);
 return rightEdgeCoordinate;
 }
 
+
+// Function to Rotate the Tetramiino(Matrix 4x4) 90 Degrees Clockwise 
+ rotateTetramino90Clockwise() 
+{ 
+    //Tetramino is 4x4 Matrix 
+    var N=4;
+    // Traverse each Cycle 
+    //console.log("BEFORE");
+   // this.printTetraminoMatrix();
+    for (var i = 0; i < N / 2; i++) { 
+        for (var j = i; j < N - i - 1; j++) { 
+  
+            // Swap elements of each Cycle 
+            // in Clockwise Direction 
+            var temp = this.currentTetramino[i][j]; 
+            this.currentTetramino[i][j] = this.currentTetramino[N - 1 - j][i]; 
+            this.currentTetramino[N - 1 - j][i] = this.currentTetramino[N - 1 - i][N - 1 - j]; 
+            this.currentTetramino[N - 1 - i][N - 1 - j] = this.currentTetramino[j][N - 1 - i];
+            this.currentTetramino[j][N - 1 - i] = temp;  
+            this.eraseTetramino();        
+        } 
+        this.drawTetramino();
+        this.eraseTetramino();
+        
+    } 
+    //console.log("AFTER");
+    //this.printTetraminoMatrix();
+} 
+// Function for Print Tetraminoe's Matrix 
+ printTetraminoMatrix() 
+{ 
+    for (var i = 0; i < 4; i++) { 
+        for (var j = 0; j < 4; j++) 
+        {
+            console.log(this.currentTetramino[i][j]+" "); 
+            console.log();
+        }
+    } 
+} 
 
 ifGameOver():boolean
 {
