@@ -24,8 +24,8 @@ export class GameScreenComponent implements OnInit {
       fieldWidth:number;
       fieldHeight:number;
 
-      initX=3
-      initY=0
+      initX:number=3
+      initY:number=0
 
       isRunning=true;
       framesPerSecond = 4;
@@ -40,8 +40,10 @@ export class GameScreenComponent implements OnInit {
       tetramino_type5:number[][]=[ [0,1,0,0],[1,1,1,0],[0,0,0,0],[0,0,0,0]] 
       
       tetraminoTypes:number[][][]
-
       currentTetramino:number[][]
+
+      tetramino_colors:string[]=["yellow","green","orange","brown","violet","lightblue"]
+      currentTetraminoColor:string;
 
       
 
@@ -67,10 +69,11 @@ export class GameScreenComponent implements OnInit {
 
     this.currentTetramino=this.tetraminoTypes[this.randomTetraminoType()]
 
-    this.ctx.fillStyle = 'lightgrey';
+    this.ctx.fillStyle = 'grey';
     this.ctx.fillRect(0, 0, this.fieldWidth, this.fieldHeight); 
-    this.drawGameFieldLines();
+    //this.drawGameFieldLines(); //for DEV Only
     this.drawBrickWall();
+    this.currentTetraminoColor=this.tetramino_colors[this.randomTetraminoColor()]
 
     requestAnimationFrame(()=>this.animate(this.ctx));
     
@@ -133,6 +136,8 @@ export class GameScreenComponent implements OnInit {
         {
           this.ctx.fillStyle = this.gameField[n][m].color;
           this.ctx.fillRect((n)*this.Scale, (m)*this.Scale, 40, 40);
+          this.ctx.strokeStyle = 'grey';
+          this.ctx.strokeRect((n)*this.Scale, (m)*this.Scale, 40, 40);
         }
       }
     }
@@ -166,14 +171,21 @@ export class GameScreenComponent implements OnInit {
   randomTetraminoType():number
   {
     var randomIndex=Math.floor(Math.random() * this.tetraminoTypes.length);
-    console.log("Index:"+randomIndex)
+   //console.log("Type Index:"+randomIndex)
+    return  randomIndex
+  }
+
+  randomTetraminoColor():number
+  {
+    var randomIndex=Math.floor(Math.random() * this.tetramino_colors.length);
+    //console.log("Color Index:"+randomIndex)
     return  randomIndex
   }
 
   drawTetramino()
   {
 
-    this.ctx.fillStyle = 'yellow';
+    this.ctx.fillStyle = this.currentTetraminoColor;
 
     for(var i=0;i<4;i++)
     {
@@ -182,6 +194,8 @@ export class GameScreenComponent implements OnInit {
         if(this.currentTetramino[j][i]==1)
         {
           this.ctx.fillRect((this.initX+i)*this.Scale, (this.initY+j)*this.Scale, 40, 40);
+          this.ctx.strokeStyle = 'grey';
+          this.ctx.strokeRect((this.initX+i)*this.Scale, (this.initY+j)*this.Scale, 40, 40);
           
 
         }
@@ -195,7 +209,7 @@ export class GameScreenComponent implements OnInit {
   eraseTetramino()
   {
 
-    this.ctx.fillStyle = 'lightgrey';
+    this.ctx.fillStyle = 'grey';
 
     for(var i=0;i<4;i++)
     {
@@ -323,17 +337,20 @@ buildWallPiece()
       if(this.currentTetramino[j][i]==1)
       {
          this.gameField[this.initX+i][this.initY+j].value=1
-         this.gameField[this.initX+i][this.initY+j].color='blue'
+         this.gameField[this.initX+i][this.initY+j].color=this.currentTetraminoColor
   
       }
 
   }
 
 }
-this.drawBrickWall()  
+this.drawBrickWall()
+
+//Initialize new Tetramino Piece
 this.initX=3
 this.initY=0
 this.currentTetramino=this.tetraminoTypes[this.randomTetraminoType()]
+this.currentTetraminoColor=this.tetramino_colors[this.randomTetraminoColor()]
 
 }
 
