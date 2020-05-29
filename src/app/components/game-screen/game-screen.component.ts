@@ -45,6 +45,8 @@ export class GameScreenComponent implements OnInit {
       tetramino_colors:string[]=["yellow","green","orange","brown","violet","lightblue"]
       currentTetraminoColor:string;
 
+      removingOperationActive:boolean=false;
+
       
 
 
@@ -69,7 +71,7 @@ export class GameScreenComponent implements OnInit {
 
     this.currentTetramino=this.tetraminoTypes[this.randomTetraminoType()]
 
-    this.ctx.fillStyle = 'grey';
+    this.ctx.fillStyle = 'black';
     this.ctx.fillRect(0, 0, this.fieldWidth, this.fieldHeight); 
     //this.drawGameFieldLines(); //for DEV Only
     this.drawBrickWall();
@@ -111,7 +113,7 @@ export class GameScreenComponent implements OnInit {
         if(m!=this.M-1)
         {
           this.gameField[n][m].value=0
-          this.gameField[n][m].color='lightgrey'
+          this.gameField[n][m].color='black'
         }
         else
         {
@@ -128,20 +130,22 @@ export class GameScreenComponent implements OnInit {
 
   drawBrickWall()
   {
-    for(var n=0;n<this.N;n++)
+    if(!this.removingOperationActive)
     {
-      for(var m=0;m<this.M;m++)
-      {
-        if(this.gameField[n][m].value==1)
-        {
-          this.ctx.fillStyle = this.gameField[n][m].color;
-          this.ctx.fillRect((n)*this.Scale, (m)*this.Scale, 40, 40);
-          this.ctx.strokeStyle = 'grey';
-          this.ctx.strokeRect((n)*this.Scale, (m)*this.Scale, 40, 40);
-        }
-      }
+      for(var n=0;n<this.N;n++)
+       {
+         for(var m=0;m<this.M;m++)
+          {
+            if(this.gameField[n][m].value==1)
+             {
+               this.ctx.fillStyle = this.gameField[n][m].color;
+               this.ctx.fillRect((n)*this.Scale, (m)*this.Scale, 40, 40);
+               this.ctx.strokeStyle = 'black';
+               this.ctx.strokeRect((n)*this.Scale, (m)*this.Scale, 40, 40);
+             }
+          }
+       }
     }
-
   }
 
   drawLine(x1: number,y1: number,x2: number,y2: number)
@@ -194,7 +198,7 @@ export class GameScreenComponent implements OnInit {
         if(this.currentTetramino[j][i]==1)
         {
           this.ctx.fillRect((this.initX+i)*this.Scale, (this.initY+j)*this.Scale, 40, 40);
-          this.ctx.strokeStyle = 'grey';
+          this.ctx.strokeStyle = 'black';
           this.ctx.strokeRect((this.initX+i)*this.Scale, (this.initY+j)*this.Scale, 40, 40);
           
 
@@ -209,7 +213,7 @@ export class GameScreenComponent implements OnInit {
   eraseTetramino()
   {
 
-    this.ctx.fillStyle = 'grey';
+    this.ctx.fillStyle = 'black';
 
     for(var i=0;i<4;i++)
     {
@@ -342,6 +346,7 @@ buildWallPiece()
       }
 
   }
+  this.drawBrickWall();
 
 }
 this.drawBrickWall()
@@ -448,15 +453,86 @@ ifGameOver():boolean
   }
 }
 
+checkForCompleteRows()
+{
+  var rowComplete=false;
+
+  for(var m=0;m<this.M-1;m++)
+  {
+    if(rowComplete)
+    break;
+
+    for(var n=0;n<this.N;n++)
+    {
+      if(this.gameField[n][m].value==0)
+      {
+        break;
+      }
+      if(n==this.N-1)
+      {
+        console.log("The Row "+m+"is Complete!");
+        rowComplete=true;
+        if(!this.removingOperationActive)
+        {
+          
+          this.removeRow(m);
+          
+        }
+        
+        
+      }
+    }
+  }
+
+}
+
+highLightRow(rowNum:number)
+{
+
+    for(var n=0;n<this.N;n++)
+    {
+      this.ctx.fillStyle = 'lightgreen';
+      this.ctx.fillRect((n)*this.Scale, (rowNum)*this.Scale, 40, 40);
+      this.ctx.strokeStyle = 'black';
+      this.ctx.strokeRect((n)*this.Scale, (rowNum)*this.Scale, 40, 40);
+      
+    }
+    this.drawBrickWall();
+  }
+
+
+
+removeRow(rowNum:number)
+{
+        this.removingOperationActive=true;
+        //console.log("Remove ROW:"+rowNum)
+        this.highLightRow(rowNum);
+          for(var m=rowNum;m>0;m--)
+          {
+            for(var n=0;n<this.N;n++)
+            {
+              //console.log("SWAP ROW:["+n+"]["+m+"]:"+this.gameField[n][m].value)
+            this.gameField[n][m]=this.gameField[n][m-1]//swap rows to move them to position of the removed row
+
+            }
+        }
+        this.removingOperationActive=false;
+
+        this.ctx.fillStyle = 'black';
+        this.ctx.fillRect(0, 0, this.fieldWidth, this.fieldHeight); 
+        
+        this.drawBrickWall();
+
+}
+
 
   animate(graphicsContext:CanvasRenderingContext2D): void 
   {
     
-    
-
      var timeout = setTimeout(()=>{
-       
-            this.drawBrickWall()  
+
+            this.checkForCompleteRows();
+            //this.drawBrickWall();  
             this.drawTetramino();
             this.eraseTetramino()
             this.makeTetraminoFall(graphicsContext);
@@ -471,7 +547,6 @@ ifGameOver():boolean
                     
     
         }, 1000 / this.framesPerSecond);
-
         
   }
 
