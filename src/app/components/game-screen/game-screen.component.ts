@@ -92,9 +92,9 @@ export class GameScreenComponent implements OnInit {
       switch(key)
        {
         case 40: if(this.direction!=3) this.direction=0; break; //down
-        case 39: if(this.direction!=1)this.direction=1; break; //right
-        case 37: if(this.direction!=2)this.direction=2; break; //left
-        case 38: if(this.allowRotation())this.rotateTetramino90Clockwise(); break; //up
+        case 39: if((this.direction!=1)&&(!this.checkRightColission())) this.direction=1; break; //right
+        case 37: if((this.direction!=2)&&(!this.checkLeftColission()))this.direction=2; break; //left
+        case 38: if(this.allowRotation()&&(!this.checkColission()))this.rotateTetramino90Clockwise(); break; //up
        }
     }
 
@@ -298,6 +298,49 @@ export class GameScreenComponent implements OnInit {
     }
 
   }
+  return false;
+}
+
+checkRightColission():boolean
+{
+  for(var i=0;i<4;i++)
+  {
+    for(var j=0;j<4;j++)
+    {
+      if(this.currentTetramino[j][i]==1)
+      {
+         if(this.gameField[this.initX+i+1][this.initY+j+1].value==1)
+         {
+           return true
+         }
+      }
+
+  }
+
+}
+
+return false;
+}
+
+checkLeftColission():boolean
+{
+  for(var i=0;i<4;i++)
+  {
+    for(var j=0;j<4;j++)
+    {
+      if(this.currentTetramino[j][i]==1)
+      {
+         if(this.gameField[this.initX+i-1][this.initY+j+1].value==1)
+         {
+           return true
+         }
+      }
+
+  }
+
+}
+
+return false;
 }
 
 allowRotation():boolean
@@ -472,6 +515,7 @@ checkForCompleteRows()
       {
         console.log("The Row "+m+"is Complete!");
         rowComplete=true;
+        this.highLightRow(m);
         if(!this.removingOperationActive)
         {
           
@@ -491,22 +535,28 @@ highLightRow(rowNum:number)
 
     for(var n=0;n<this.N;n++)
     {
-      this.ctx.fillStyle = 'lightgreen';
-      this.ctx.fillRect((n)*this.Scale, (rowNum)*this.Scale, 40, 40);
-      this.ctx.strokeStyle = 'black';
-      this.ctx.strokeRect((n)*this.Scale, (rowNum)*this.Scale, 40, 40);
+      //this.ctx.fillStyle = 'lightgreen';
+     // this.ctx.fillRect((n)*this.Scale, (rowNum)*this.Scale, 40, 40);
+     // this.ctx.strokeStyle = 'black';
+     // this.ctx.strokeRect((n)*this.Scale, (rowNum)*this.Scale, 40, 40);
+      
+      this.gameField[n][rowNum].color='lightgreen'
+
       
     }
     this.drawBrickWall();
+    return true;
   }
 
 
 
 removeRow(rowNum:number)
 {
-        this.removingOperationActive=true;
         //console.log("Remove ROW:"+rowNum)
-        this.highLightRow(rowNum);
+        this.highLightRow(rowNum);//Highlight the Completed Row to be removed
+      
+        this.removingOperationActive=true;
+
           for(var m=rowNum;m>0;m--)
           {
             for(var n=0;n<this.N;n++)
@@ -517,11 +567,11 @@ removeRow(rowNum:number)
             }
         }
         this.removingOperationActive=false;
-
-        this.ctx.fillStyle = 'black';
-        this.ctx.fillRect(0, 0, this.fieldWidth, this.fieldHeight); 
         
-        this.drawBrickWall();
+        //redraw modified Brick Wall,following removeRow() operation
+        setTimeout(()=>{ this.ctx.fillStyle = 'black';
+                          this.ctx.fillRect(0, 0, this.fieldWidth, this.fieldHeight); 
+                          this.drawBrickWall()}, 300);   
 
 }
 
