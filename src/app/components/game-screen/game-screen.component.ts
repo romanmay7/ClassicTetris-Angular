@@ -91,10 +91,15 @@ export class GameScreenComponent implements OnInit {
       
       switch(key)
        {
-        case 40: if(this.direction!=3) this.direction=0; break; //down
-        case 39: if((this.direction!=1)&&(!this.checkRightColission())) this.direction=1; break; //right
-        case 37: if((this.direction!=2)&&(!this.checkLeftColission()))this.direction=2; break; //left
-        case 38: if(this.allowRotation()&&(!this.checkColission()))this.rotateTetramino90Clockwise(); break; //up
+        case 32: if(this.direction!=3) {this.framesPerSecond=15; setTimeout(()=>this.framesPerSecond=4,400); break;} //Temporary Speed Up on Pressing 'Space' Key
+        case 40: if(this.direction!=3) {this.framesPerSecond=15; setTimeout(()=>this.framesPerSecond=4,400); break;} //Temporary Speed Up on Pressing 'Down' Key
+        case 83: if(this.direction!=3) {this.framesPerSecond=15; setTimeout(()=>this.framesPerSecond=4,400); break;} //Temporary Speed Up on Pressing 'S' Key
+        case 39: if((this.direction!=1)&&(!this.checkRightColission())) this.direction=1; break; //Right on Pressing 'Right Arrow Key' Key
+        case 37: if((this.direction!=2)&&(!this.checkLeftColission()))this.direction=2; break; //Left on Pressing 'Left Arrow Key' Key
+        case 68: if((this.direction!=1)&&(!this.checkRightColission())) this.direction=1; break; //Right on Pressing 'D' Key
+        case 65: if((this.direction!=2)&&(!this.checkLeftColission()))this.direction=2; break; //Left on Pressing 'A' Key
+        case 38: if(this.allowRotation()&&(!this.checkColission()))this.rotateTetramino90Clockwise(); break; //Up  on Pressing 'Up Arrow Key' Key
+        case 87: if(this.allowRotation()&&(!this.checkColission()))this.rotateTetramino90Clockwise(); break; //Up on Pressing 'W' Key
        }
     }
 
@@ -264,10 +269,11 @@ export class GameScreenComponent implements OnInit {
     {
        var leftEdge=this.findTetraminoLeftEdge();
 
-      if((leftEdge>0)&&(this.initX-leftEdge>=-1))
+      if((leftEdge>0)&&(this.initX-leftEdge>=-3))
       {
+        console.log("X before is:"+this.initX);
         this.initX=this.initX - 1
-        console.log("X:"+this.initX);
+        console.log("X is:"+this.initX);
         this.direction=0;
 
       }
@@ -404,24 +410,27 @@ this.currentTetraminoColor=this.tetramino_colors[this.randomTetraminoColor()]
 
 findTetraminoLeftEdge():number
 {
-  var leftEdgeCoordinate=1
+  var leftEdgeCoordinate=2
   for(var i=0;i<4;i++)
   {
     for(var j=0;j<4;j++)
     {
-      if((this.currentTetramino[i][j]==1)&&(j==0))
+      if(this.currentTetramino[i][j]==1)
       {
-        console.log("Left:"+0);
-        return 0;
-
-      }
-      else if((this.currentTetramino[i][j]==1)&&(j<leftEdgeCoordinate)) 
-      {
-        leftEdgeCoordinate=j;
-      }
+         if (j==0)
+          {
+            //console.log("Left Position:"+0);
+            return 0;
+          }
+         if(j<leftEdgeCoordinate)
+          {
+            //console.log("currentTetramino["+i+"]["+j+"]="+this.currentTetramino[i][j]+",j:"+j+"< leftEdgeCoordinate:"+leftEdgeCoordinate)
+            leftEdgeCoordinate=j;
+          } 
+     }
     }  
 }
-console.log("Left:"+leftEdgeCoordinate);
+//console.log("Left Pos:"+leftEdgeCoordinate);
 return leftEdgeCoordinate;
 }
 
@@ -480,9 +489,10 @@ return rightEdgeCoordinate;
 { 
     for (var i = 0; i < 4; i++) { 
         for (var j = 0; j < 4; j++) 
-        {
+        {   
+          console.log("Row:"+i);
             console.log(this.currentTetramino[i][j]+" "); 
-            console.log();
+           
         }
     } 
 } 
