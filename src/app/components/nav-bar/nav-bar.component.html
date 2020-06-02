@@ -1,0 +1,38 @@
+<header>
+    <nav
+      class="navbar navbar-light bg-light navbar-expand-lg navbar-toggleable-sm "
+    >
+      <div class="container" style="float:left">
+        <a class="navbar-brand" style="margin-left:0%;" [routerLink]="['/']"><img src="../../../assets/tetris-logo.png" height="52" width="52" /><b>  Classic Tetris</b></a>
+        <h5 style="color:green;">Score: <span style="color:rgb(36, 206, 36);">100</span></h5>
+        <span class="tab"></span>
+        <h5 style="color:brown;"> <span style="color:rgb(92, 35, 35);">NextFigure</span></h5>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target=".navbar-collapse"
+          aria-label="Toggle navigation"
+          [attr.aria-expanded]="isExpanded"
+          (click)="toggle()"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
+          [ngClass]="{ show: isExpanded }"
+        >
+          <ul class="navbar-nav flex-grow">
+            <li class="nav-item"
+                [routerLinkActive]="['link-active']"
+                [routerLinkActiveOptions]="{ exact: true }">
+              <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
+            </li>
+            <li><a class="nav-link text-dark" [routerLink]="['/']">About</a></li>
+            <li><a class="nav-link text-dark" [routerLink]="['highscores']">Highscores</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+  
