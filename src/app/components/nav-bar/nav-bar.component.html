@@ -4,9 +4,9 @@
     >
       <div class="container" style="float:left">
         <a class="navbar-brand" style="margin-left:0%;" [routerLink]="['/']"><img src="../../../assets/tetris-logo.png" height="52" width="52" /><b>  Classic Tetris</b></a>
-        <h5 style="color:green;">Score: <span style="color:rgb(36, 206, 36);">100</span></h5>
+        <h5 style="color:green;">Score:<span style="color:rgb(36, 206, 36);">{{gameservice.gamescore}}</span></h5>
         <span class="tab"></span>
-        <h5 style="color:brown;"> <span style="color:rgb(92, 35, 35);">NextFigure</span></h5>
+        <h5 style="color:brown;"> <span style="color:rgb(92, 35, 35);">Next Figure: <img src="../../../assets/{{gameservice.tetraminoType_images[gameservice.next_TetraminoTypeIndex]}}" height="52" width="57"></span></h5>
         <button
           class="navbar-toggler"
           type="button"

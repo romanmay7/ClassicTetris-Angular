@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GameService } from 'src/app/services/game.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -8,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 export class NavBarComponent implements OnInit {
   isExpanded = false;
 
-  constructor() { }
+  constructor(private gameservice:GameService) { }
 
   collapse() {
     this.isExpanded = false;

@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { GameService } from 'src/app/services/game.service';
 
 @Component({
   selector: 'app-game-screen',
@@ -42,6 +43,8 @@ export class GameScreenComponent implements OnInit {
       tetraminoTypes:number[][][]
       currentTetramino:number[][]
 
+
+
       tetramino_colors:string[]=["yellow","green","orange","brown","violet","lightblue"]
       currentTetraminoColor:string;
 
@@ -50,7 +53,7 @@ export class GameScreenComponent implements OnInit {
       
 
 
-  constructor() { }
+  constructor(private gameservice:GameService) { }
 
   ngOnInit() {
 
@@ -68,8 +71,16 @@ export class GameScreenComponent implements OnInit {
     this.ctx = this.canvas.nativeElement.getContext('2d');
     
     this.initializeBrickWall();
+    
+    var random1=Math.floor(Math.random() * this.tetraminoTypes.length);
+    var random2=Math.floor(Math.random() * this.tetraminoTypes.length);
 
-    this.currentTetramino=this.tetraminoTypes[this.randomTetraminoType()]
+    this.gameservice.curr_TetraminoTypeIndex=random1
+    this.gameservice.next_TetraminoTypeIndex=random2
+
+    this.currentTetramino=this.tetraminoTypes[random1]
+
+    
 
     this.ctx.fillStyle = 'black';
     this.ctx.fillRect(0, 0, this.fieldWidth, this.fieldHeight); 
@@ -177,11 +188,13 @@ export class GameScreenComponent implements OnInit {
 
   }
 
-  randomTetraminoType():number
+  randomTetraminoType()
   {
     var randomIndex=Math.floor(Math.random() * this.tetraminoTypes.length);
    //console.log("Type Index:"+randomIndex)
-    return  randomIndex
+   this.gameservice.curr_TetraminoTypeIndex= this.gameservice.next_TetraminoTypeIndex
+   this.gameservice.next_TetraminoTypeIndex=randomIndex;
+    
   }
 
   randomTetraminoColor():number
@@ -403,7 +416,8 @@ this.drawBrickWall()
 //Initialize new Tetramino Piece
 this.initX=3
 this.initY=0
-this.currentTetramino=this.tetraminoTypes[this.randomTetraminoType()]
+this.randomTetraminoType()
+this.currentTetramino=this.tetraminoTypes[this.gameservice.curr_TetraminoTypeIndex]
 this.currentTetraminoColor=this.tetramino_colors[this.randomTetraminoColor()]
 
 }
@@ -525,6 +539,7 @@ checkForCompleteRows()
       {
         console.log("The Row "+m+"is Complete!");
         rowComplete=true;
+        this.gameservice.incrementScore();
         this.highLightRow(m);
         if(!this.removingOperationActive)
         {

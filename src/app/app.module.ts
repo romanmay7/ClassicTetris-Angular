@@ -8,6 +8,8 @@ import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { TitleScreenComponent } from './components/title-screen/title-screen.component';
 import { HighscoresListComponent } from './components/highscores-list/highscores-list.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { DatePipe } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -20,9 +22,10 @@ import { FooterComponent } from './components/footer/footer.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
