@@ -6,6 +6,8 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from 'rxjs';
 import { map } from "rxjs/operators";
 import { DatePipe } from '@angular/common';
+import { GameRecord } from '../data_models/gamerecord.model.ts';
+import { GlobalVariable } from 'src/global';
 
 
 @Injectable({
@@ -21,7 +23,7 @@ export class GameService {
 
   tetraminoType_images:string[]=["tetraminoType-01.png","tetraminoType-02.png","tetraminoType-03.png","tetraminoType-04.png","tetraminoType-05.png"]
 
-  //highscores:GameRecord[]
+  highscores:GameRecord[]
   playerName:string="Anonymous";
 
   constructor(private router: Router,private http: HttpClient,public datepipe: DatePipe) { }
@@ -39,13 +41,19 @@ export class GameService {
   async gameOver()
   {
     alert("Game Over,your Score is:"+this.gamescore)
+    
+    //If Player's  Score is greater than smallest 'score' in Top 10 Array
+    //Send User's Game Record with Player's Score to 'HighScores API'
 
-    this.playerName = prompt("Please enter your name", "Anonymous");
-    let date=Date.now();
-    let current_date =this.datepipe.transform(date, 'dd/MM/yyyy');
-    //Send Game Score Record to Backend and Store it
-   // let currentGameScore=new GameRecord(this.gamescore,this.playerName,current_date.toString())
-    //await this.saveGameScore(currentGameScore);
+    if(this.gamescore>this.highscores[9].score)
+    {
+        this.playerName = prompt("Please enter your name", "Anonymous");
+        let date=Date.now();
+        let current_date =this.datepipe.transform(date, 'dd/MM/yyyy');
+    
+        let currentGameRecord=new GameRecord(this.gamescore,this.playerName,current_date.toString())
+        await this.saveHighScore(currentGameRecord);
+    }
 
     this.resetScore();
     this.router.navigate(["/"])
@@ -55,20 +63,20 @@ export class GameService {
 //---------------------------------------------------------------------------------------------------------------------------------
   async loadHighScores()
    {
-    //this.highscores = await this.http.get<GameRecord[]>(GlobalVariable.BASE_API_URL+"api/HighScores/GetHighScoresList3",).toPromise();
+    this.highscores = await this.http.get<GameRecord[]>(GlobalVariable.BASE_API_URL+"api/HighScores/GetHighScoresList3",).toPromise();
    }
 //---------------------------------------------------------------------------------------------------------------------------------
 
-    //saveGameScore(score:GameRecord)
-   //{
-  //  const headers= new HttpHeaders()
-   // .set('content-type', 'application/json')
+  saveHighScore(score:GameRecord)
+   {
+    const headers= new HttpHeaders()
+    .set('content-type', 'application/json')
     
-    //this.http.post<any>(GlobalVariable.BASE_API_URL+"api/HighScores/AddNewRecord", JSON.stringify(score),{ 'headers': headers }).subscribe(data => {
-   //   console.log("Your Score was saved on Server");
-//
+    this.http.post<any>(GlobalVariable.BASE_API_URL+"api/HighScores/AddNewRecord3", JSON.stringify(score),{ 'headers': headers }).subscribe(data => {
+    console.log("Your Score was saved on Server");
 
-  //  })
-  // }
+
+    })
+   }
 //-----------------------------------------------------------------------------------------------------------------------------------   
 }

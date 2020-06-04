@@ -668,7 +668,8 @@ removeRow(rowNum:number)
             
             if(this.ifGameOver()){
               clearInterval(timeout);
-              alert("GameOver!");
+              this.gameservice.gameOver();
+              //alert("GameOver!");
             }
             else{requestAnimationFrame(()=>(this.animate(graphicsContext)));}
                     
