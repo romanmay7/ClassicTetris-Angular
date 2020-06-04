@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { GameService } from 'src/app/services/game.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-game-screen',
@@ -53,16 +54,34 @@ export class GameScreenComponent implements OnInit {
       
 
 
-  constructor(private gameservice:GameService) { }
+  constructor(private gameservice:GameService,private deviceService: DeviceDetectorService) { }
 
   ngOnInit() {
 
-    this.N=10;
-    this.M=20;
+    if(this.deviceService.isDesktop()||this.deviceService.isTablet()) {
 
-    this.Scale=40;
-    this.fieldWidth=this.Scale*this.N;
-    this.fieldHeight=this.Scale*this.M;
+      this.N=10;
+      this.M=20;
+  
+      this.Scale=40;
+      this.fieldWidth=this.Scale*this.N;
+      this.fieldHeight=this.Scale*this.M;
+
+      this.framesPerSecond = 4;
+    }
+  
+    else if(this.deviceService.isMobile())
+    {
+      this.N=10;
+      this.M=18;
+  
+      this.Scale=40;
+      this.fieldWidth=this.Scale*this.N;
+      this.fieldHeight=this.Scale*this.M;
+
+      this.framesPerSecond = 3;
+    }
+      
     
     this.tetraminoTypes=[this.tetramino_type1,this.tetramino_type2,this.tetramino_type3,this.tetramino_type4,this.tetramino_type5]
 
