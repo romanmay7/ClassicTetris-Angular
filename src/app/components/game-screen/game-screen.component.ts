@@ -114,6 +114,39 @@ export class GameScreenComponent implements OnInit {
        }
     }
 
+       //Listening to click events
+       @HostListener('window:click', ['$event'])
+       clickEvent(event: MouseEvent) {
+         console.log(event);
+       
+         var positionX = event.clientX;
+         var positionY = event.clientY;
+         console.log("positionX:"+positionX+",HEAD-x:"+((this.initX*this.Scale)+40));
+         console.log("positionY:"+positionY+",HEAD-y:"+this.initY*this.Scale);
+         
+         if((positionX>((this.initX*this.Scale)+this.Scale))&&(positionX<=((this.initX+3)*this.Scale)))
+         {
+          if(this.allowRotation()&&(!this.checkColission()))
+          {
+            this.rotateTetramino90Clockwise();
+          }
+           console.log("ROTATE");
+         }
+
+
+         if((positionX>(this.initX*this.Scale)+40))
+           {
+              this.direction=1;  //right
+              console.log("GO RIGHT");
+           }
+          else if(positionX<=(this.initX*this.Scale)+40)
+           {
+             this.direction=2; //left
+             console.log("GO LEFT");
+           }
+
+         }
+   
 
   initializeBrickWall()
   {
