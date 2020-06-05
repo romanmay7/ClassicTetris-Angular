@@ -2,7 +2,7 @@
 
 "Classic Tetris" Game writen in TypeScriptr,hosted in AWS S3, "HighScores". API for the game implemented in AWS Lambda(.NET Core 3.1)with DynamoDB
 
-Demo Video Link : https://www.youtube.com/watch?v=BdBPQmbX404
+Demo Video Link :https://www.youtube.com/watch?v=kJEIF0Q1ezI
 
 Repository for "HighScores" API :
 https://github.com/RomanMayer7/AWSServerlessHighScoresAPI
