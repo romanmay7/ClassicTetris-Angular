@@ -56,14 +56,16 @@ export class GameService {
     }
 
     this.resetScore();
-    this.router.navigate(["/"])
-    setTimeout(function(){ window.location.reload(); }, 500);
+    //this.router.navigate(["/"])
+    //setTimeout(function(){ window.location.reload(); }, 500);
 
   }
 //---------------------------------------------------------------------------------------------------------------------------------
   async loadHighScores()
    {
-    this.highscores = await this.http.get<GameRecord[]>(GlobalVariable.BASE_API_URL+"api/HighScores/GetHighScoresList3",).toPromise();
+    var data = await this.http.get<GameRecord[]>(GlobalVariable.BASE_API_URL+"api/HighScores/GetHighScoresList3",).toPromise();
+    this.highscores = Object.values(data);
+    this.highscores.sort((a, b) => (a.score < b.score) ? 1 : -1)
    }
 //---------------------------------------------------------------------------------------------------------------------------------
 

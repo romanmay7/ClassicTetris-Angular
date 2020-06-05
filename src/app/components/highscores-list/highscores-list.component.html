@@ -1,1 +1,22 @@
-<p>highscores-list works!</p>
+<h2 style="color:white;">HIGHSCORES</h2>
+
+<table class="table table-sm table-dark">
+<th *ngFor = "let column of headers">
+    {{column}}
+  </th>
+
+  <tr *ngFor = "let record of highscores_list;let idx = index">
+    <td>
+         {{idx+1}}
+    </td>
+    <td>
+        {{record.playerName}}
+      </td>
+      <td >
+        {{record.score}}
+      </td>
+      <td >
+        {{record.date}}
+      </td>
+  </tr>
+</table>
